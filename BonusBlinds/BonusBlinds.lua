@@ -150,9 +150,9 @@ SMODS.Bonus = SMODS.Consumable:extend {
             Rare = HEX("fda200"),
             Legendary = {0,0,0,1}
         }
-        local len = string.len(self.rarity)
+        local len = string.len(localize('k_' .. string.lower(self.rarity)) or self.rarity)
         local size = 1.3 - (len > 5 and 0.02 * (len - 5) or 0)
-        badges[#badges + 1] = create_badge(self.rarity, colours[self.rarity], nil, size)
+        badges[#badges + 1] = create_badge(localize('k_' .. string.lower(self.rarity)) or self.rarity, colours[self.rarity], nil, size)
     end,
     can_use = function(self, card)
         return ((not not G.blind_select) and (G.STATE ~= G.STATES.BUFFOON_PACK) and (G.STATE ~= G.STATES.TAROT_PACK) and (G.STATE ~= G.STATES.SPECTRAL_PACK) and (G.STATE ~= G.STATES.STANDARD_PACK) and (G.STATE ~= G.STATES.PLANET_PACK)) or ((card.area == G.pack_cards) and (#G.consumeables.cards < (G.consumeables.config.card_limit + ((card.edition and card.edition.negative) and 1 or 0))))
