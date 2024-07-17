@@ -1284,7 +1284,7 @@ SMODS.Blind {
         if not check then G.GAME.blind.hands[handname] = true end
     end,
     get_loc_debuff_text = function(self)
-        return "Must play 5 Cards and no repeat hand types this round"
+        return localize('bl_watch_debuff')
     end,
     in_pool = function(self)
         return false
@@ -1673,6 +1673,7 @@ function SMODS.current_mod.process_loc_text()
         }
     }
     G.localization.misc.dictionary["k_blind_pack"] = "Blind Pack"
+    G.localization.misc.dictionary["bl_watch_debuff"] = "Must play 5 Cards and no repeat hand types this round"
     G.localization.descriptions.Other["bl_watch"] = {}
     G.localization.descriptions.Other["bl_watch"].text = { 'Must play 5 cards.', 'No repeat hand', 'types this round.' }
     G.localization.descriptions.Other["bl_watch"].name = "The Watch"
