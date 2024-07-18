@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.1.0
+--- VERSION: 1.2.1
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -192,7 +192,7 @@ local unknown = SMODS.UndiscoveredSprite {
     pos = {x = 0, y = 0}
 }
 
---- Common (10)
+--- Common (11)
 
 SMODS.Bonus {
     key = 'extra',
@@ -475,7 +475,40 @@ SMODS.Bonus {
     end
 }
 
---- Uncommon (8)
+SMODS.Bonus {
+    key = 'roulette',
+    loc_txt = {
+        name = "Roulette Blind",
+        text = {
+            "Play {C:attention}#1#{}. {C:green}#2# in #3#{}",
+            "chance for {C:attention}+#4#{} Ante.",
+            "{C:inactive}(unusable on antes {C:attention}#5#{C:inactive} and {C:attention}#6#{C:inactive})"
+        }
+    },
+    atlas = "another",
+    pos = {x = 1, y = 2},
+    rarity = 'Common',
+    set_ability = function(self, card, initial, delay_sprites)
+        card.ability.the_blind = 'bl_big'
+        card.ability.ante_mod = 1
+    end,
+    loc_vars = function(self, info_queue, card)
+        return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}, G.GAME.probabilities.normal, 3, 1, G.GAME.win_ante and (G.GAME.win_ante - 1) or 7, G.GAME.win_ante or 8}}
+    end,
+    use2 = function(self, card, area, copier)
+        if pseudorandom("roulette") < G.GAME.probabilities.normal/3 then
+            bonus_selection(card.ability.the_blind, {ante_mod = card.ability.ante_mod})
+        else
+            bonus_selection(card.ability.the_blind, {none = true})
+        end
+    end,
+    can_use = function(self, card)
+        local cond = (G.GAME.round_resets.ante ~= G.GAME.win_ante) and (G.GAME.round_resets.ante ~= (G.GAME.win_ante - 1))
+        return ((not not G.blind_select) and (cond) and (G.STATE ~= G.STATES.BUFFOON_PACK) and (G.STATE ~= G.STATES.TAROT_PACK) and (G.STATE ~= G.STATES.SPECTRAL_PACK) and (G.STATE ~= G.STATES.STANDARD_PACK) and (G.STATE ~= G.STATES.PLANET_PACK)) or ((card.area == G.pack_cards) and (#G.consumeables.cards < (G.consumeables.config.card_limit + ((card.edition and card.edition.negative) and 1 or 0))))
+    end
+}
+
+--- Uncommon (9)
 
 SMODS.Bonus {
     key = 'redo',
@@ -817,6 +850,30 @@ SMODS.Bonus {
     end
 }
 
+SMODS.Bonus {
+    key = 'quick',
+    loc_txt = {
+        name = "Quick Blind",
+        text = {
+            "Play {C:red}#1#{}",
+        }
+    },
+    atlas = "another",
+    pos = {x = 0, y = 2},
+    cost = 3,
+    rarity = 'Uncommon',
+    set_ability = function(self, card, initial, delay_sprites)
+        card.ability.the_blind = 'bl_bb_countdown'
+    end,
+    loc_vars = function(self, info_queue, card)
+        info_queue[#info_queue+1] = {key = 'bl_countdown', set = 'Other'}
+        return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}}}
+    end,
+    use2 =function(self, card, area, copier)
+        bonus_selection(card.ability.the_blind, {none = true})
+    end
+}
+
 --- Rare (3)
 
 SMODS.Bonus {
@@ -933,7 +990,7 @@ SMODS.Bonus {
     end
 }
 
---- Legendary (2)
+--- Legendary (3)
 
 SMODS.Bonus {
     key = 'champion',
@@ -991,6 +1048,36 @@ SMODS.Bonus {
     end,
     use2 =function(self, card, area, copier)
         bonus_selection('bl_serpent', {eternal_round = true, spectrals = true})
+    end
+}
+
+SMODS.Bonus {
+    key = 'mall',
+    loc_txt = {
+        name = "Mall Blind",
+        text = {
+            "Defeat a {C:blue}Showdown Blind{} for",
+            "a {C:purple}Super Shop{}.",
+        }
+    },
+    atlas = "another",
+    pos = {x = 2, y = 2},
+    rarity = 'Legendary',
+    cost = 7,
+    set_ability = function(self, card, initial, delay_sprites)
+    end,
+    loc_vars = function(self, info_queue, card)
+        return {vars = {}}
+    end,
+    use2 = function(self, card, area, copier)
+        local rngpick = {}
+        for i, j in pairs(G.P_BLINDS) do
+            if j.boss and j.boss.showdown and not j.boss.bonus then
+                table.insert(rngpick, i)
+            end
+        end
+        local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
+        bonus_selection(blind, {super_shop = true})
     end
 }
 
@@ -1234,6 +1321,28 @@ SMODS.Back {
     atlas = 'decks',
     apply = function(self)
         G.GAME.bonus_rate = 10
+        G.GAME.modifiers.scaling = (G.GAME.modifiers.scaling or 1) + 0.5
+    end
+}
+
+SMODS.Back {
+    key = 'mall',
+    loc_txt = {
+        name = "Mall Deck",
+        text = {
+            "After defeating each",
+            "{C:attention}Boss Blind{}, visit",
+            "a {C:purple}Super Shop{}"
+        }
+    },
+    name = "Mall Deck",
+    pos = { x = 1, y = 0 },
+    atlas = 'decks',
+    trigger_effect = function(self, args)
+        if args.context == 'eval' and G.GAME.last_blind and G.GAME.last_blind.boss then
+            G.GAME.super_shop = true
+            G.GAME.current_round.super_reroll_cost = 10
+        end
     end
 }
 
@@ -1290,6 +1399,61 @@ SMODS.Blind {
         return false
     end
 }
+
+SMODS.Blind {
+    loc_txt = {
+        name = 'The Countdown',
+        text = { 'Hands allowed for ', '#1#' }
+    },
+    key = 'countdown',
+    name = 'The Countdown',
+    config = {},
+    boss = {min = 1, max = 10, bonus = true},
+    boss_colour = HEX("AC3900"),
+    atlas = "blinds",
+    pos = { x = 0, y = 1},
+    vars = {"1:00"},
+    dollars = 5,
+    mult = 2,
+    set_blind = function(self)
+        G.GAME.blind.config.timing = G.GAME.blind.config.timing or 60
+    end,
+    debuff_hand = function(self, cards, hand, handname, check)
+        if G.GAME.blind.config.timing <= 0 then
+            return true
+        end
+        return false
+    end,
+    get_loc_debuff_text = function(self)
+        if G.GAME.blind.config.timing <= 0 then
+            return "Times Up"
+        end
+        return "Hands allowed for 1:00"
+    end,
+    in_pool = function(self)
+        return false
+    end,
+    loc_vars = function(self, info_queue, card)
+        if G.GAME.blind.config.timing == nil then
+            return {vars = {"1:00.00"}}
+        end
+        local m = math.floor(G.GAME.blind.config.timing / 60)
+        local s = (G.GAME.blind.config.timing - (60 * m))
+        local d = math.floor(100 * (s - math.floor(s)))
+        s = tostring(math.floor(s))
+        if string.len(s) == 1 then
+            s = "0" .. s
+        end
+        d = tostring(d)
+        if string.len(d) == 1 then
+            d = "0" .. d
+        end
+        m = tostring(m)
+        return {vars = {m .. ":" .. s .. "." .. d}}
+    end,
+}
+
+SMODS.Atlas({ key = "cool_shop", atlas_table = "ANIMATION_ATLAS", path = "cool_shop.png", px = 113, py = 57, frames = 4 })
 
 ----------------
 
@@ -1663,6 +1827,10 @@ function bonus_end_of_round(bonusData)
             return true
         end}))
     end
+    if bonusData.super_shop then
+        G.GAME.super_shop = true
+        G.GAME.current_round.super_reroll_cost = 10
+    end
 end
 
 function SMODS.current_mod.process_loc_text()
@@ -1677,6 +1845,9 @@ function SMODS.current_mod.process_loc_text()
     G.localization.descriptions.Other["bl_watch"] = {}
     G.localization.descriptions.Other["bl_watch"].text = { 'Must play 5 cards.', 'No repeat hand', 'types this round.' }
     G.localization.descriptions.Other["bl_watch"].name = "The Watch"
+    G.localization.descriptions.Other["bl_countdown"] = {}
+    G.localization.descriptions.Other["bl_countdown"].text = { 'Hands allowed for ', '1:00' }
+    G.localization.descriptions.Other["bl_countdown"].name = "The Countdown"
     G.localization.descriptions.Other["bl_crimson"] = {}
     G.localization.descriptions.Other["bl_crimson"].name = localize{type ='name_text', key = 'bl_final_heart', set = 'Blind'}
     G.localization.descriptions.Other["bl_crimson"].text = localize{type = 'raw_descriptions', key = 'bl_final_heart', set = 'Blind', vars = {}}
@@ -1709,14 +1880,22 @@ function SMODS.current_mod.process_loc_text()
     -- G.localization.descriptions.Other["ed_negative_consumable"].text = localize{type = 'raw_descriptions', key = 'e_negative_consumable', set = 'Edition', vars = {1}}
 end
 
-local old_amount = get_blind_amount
+local get_blind_amount_old = get_blind_amount
 function get_blind_amount(ante)
-    local old = old_amount(ante)
-    local k = (old/old)*1.5
-    if G.GAME.selected_back.name == "Ante Deck" then
-        if not G.GAME.modifiers.scaling or G.GAME.modifiers.scaling == 1 then 
+    if G.GAME.modifiers.scaling and G.GAME.selected_back.name == "Ante Deck" then
+        local save = G.GAME.modifiers.scaling
+        G.GAME.modifiers.scaling = math.floor(G.GAME.modifiers.scaling)
+        local old = nil
+        if Talisman then
+            old = get_blind_amount_old(ante) or to_big(1)
+        else
+            old = get_blind_amount_old(ante) or 1
+        end
+        G.GAME.modifiers.scaling = save
+        local k = (old/old)*1.5
+        if G.GAME.modifiers.scaling == 1.5 then 
             local amounts = {
-              300,  1000, 4000,  15000,  30000,  60000,   100000,  200000
+            300,  1000, 4000,  15000,  30000,  60000,   100000,  200000
             }
             if ante < 1 then return (old/old)*100 end
             if ante <= 8 then return (old/old)*amounts[ante] end
@@ -1724,7 +1903,7 @@ function get_blind_amount(ante)
             local amount = (old/old)*math.floor(a*(b+(k*c)^d)^c)
             amount = amount - amount%(10^math.floor(math.log10(amount)-1))
             return amount
-          elseif G.GAME.modifiers.scaling == 2 then 
+        elseif G.GAME.modifiers.scaling == 2.5 then 
             local amounts = {
               300,  1500, 6000,  18000,  50000,  90000,   180000,  350000
             }
@@ -1734,7 +1913,7 @@ function get_blind_amount(ante)
             local amount = (old/old)*math.floor(a*(b+(k*c)^d)^c)
             amount = amount - amount%(10^math.floor(math.log10(amount)-1))
             return amount
-          else
+        elseif G.GAME.modifiers.scaling == 3.5 then
             local amounts = {
               300,  2000, 8000,  35000,  100000,  350000,   500000,  1000000
             }
@@ -1744,9 +1923,304 @@ function get_blind_amount(ante)
             local amount = (old/old)*math.floor(a*(b+(k*c)^d)^c)
             amount = amount - amount%(10^math.floor(math.log10(amount)-1))
             return amount
+        else
+            local amounts = {
+                300,  3000, 12000,  50000,  175000,  450000,   700000,  1500000
+              }
+              if ante < 1 then return (old/old)*100 end
+              if ante <= 8 then return (old/old)*amounts[ante] end
+              local a, b, c, d = (old/old)*amounts[8],(old/old)*1.6,ante-8, 1 + 0.2*(ante-8)
+              local amount = (old/old)*math.floor(a*(b+(k*c)^d)^c)
+              amount = amount - amount%(10^math.floor(math.log10(amount)-1))
+              return amount
         end
     end
-    return old
+    return get_blind_amount_old(ante)
+end
+
+local upd = Game.update
+function Game:update(dt)
+    upd(self,dt)
+    if G.GAME and G.GAME.round_resets and G.GAME.blind and G.GAME.blind.name == "The Countdown" and G.GAME.blind.config and (G.GAME.blind.config.timing ~= nil) and not G.GAME.blind.disabled then
+        if Talisman then
+            if to_big(G.GAME.chips) < to_big(G.GAME.blind.chips) then
+                G.GAME.blind.config.timing = G.GAME.blind.config.timing and math.max(0, (G.GAME.blind.config.timing) - dt) or nil
+                G.GAME.blind:set_text()
+            end
+        else
+            if (G.GAME.chips) < (G.GAME.blind.chips) then
+                G.GAME.blind.config.timing = G.GAME.blind.config.timing and math.max(0, (G.GAME.blind.config.timing) - dt) or nil
+                G.GAME.blind:set_text()
+            end
+        end
+    end
+end
+
+---------Super Shop------------------------
+
+function coolShop()
+    G.shop_jokers = CardArea(
+      G.hand.T.x+0,
+      G.hand.T.y+G.ROOM.T.y + 9,
+      math.min(3, G.GAME.shop.joker_max)*1.02*G.CARD_W,
+      1.05*G.CARD_H, 
+      {card_limit = G.GAME.shop.joker_max, type = 'shop', highlight_limit = 1})
+    
+      G.special_card = CardArea(
+        G.hand.T.x+0,
+        G.hand.T.y+G.ROOM.T.y + 9,
+        1.02*G.CARD_W,
+        1.05*G.CARD_H, 
+        {card_limit = 1, type = 'shop', highlight_limit = 1})
+
+
+    G.shop_vouchers = CardArea(
+      G.hand.T.x+0,
+      G.hand.T.y+G.ROOM.T.y + 9,
+      2.1*G.CARD_W,
+      1.05*G.CARD_H, 
+      {card_limit = 1, type = 'shop', highlight_limit = 1})
+
+    G.shop_booster = CardArea(
+      G.hand.T.x+0,
+      G.hand.T.y+G.ROOM.T.y + 9,
+      2.4*G.CARD_W,
+      1.15*G.CARD_H, 
+      {card_limit = 2, type = 'shop', highlight_limit = 1, card_w = 1.27*G.CARD_W})
+
+    local shop_sign = AnimatedSprite(0,0, 4.4, 2.2, G.ANIMATION_ATLAS['bb_cool_shop'])
+    shop_sign:define_draw_steps({
+      {shader = 'dissolve', shadow_height = 0.05},
+      {shader = 'dissolve'}
+    })
+    G.SHOP_SIGN = UIBox{
+      definition = 
+        {n=G.UIT.ROOT, config = {colour = G.C.DYN_UI.MAIN, emboss = 0.05, align = 'cm', r = 0.1, padding = 0.1}, nodes={
+          {n=G.UIT.R, config={align = "cm", padding = 0.1, minw = 4.72, minh = 3.1, colour = G.C.DYN_UI.DARK, r = 0.1}, nodes={
+            {n=G.UIT.R, config={align = "cm"}, nodes={
+              {n=G.UIT.O, config={object = shop_sign}}
+            }},
+            {n=G.UIT.R, config={align = "cm"}, nodes={
+              {n=G.UIT.O, config={object = DynaText({string = {localize('ph_improve_run')}, colours = {lighten(G.C.RED, 0.3)},shadow = true, rotate = true, float = true, bump = true, scale = 0.5, spacing = 1, pop_in = 1.5, maxw = 4.3})}}
+            }},
+          }},
+        }},
+      config = {
+        align="cm",
+        offset = {x=0,y=-15},
+        major = G.HUD:get_UIE_by_ID('row_blind'),
+        bond = 'Weak'
+      }
+    }
+    G.E_MANAGER:add_event(Event({
+      trigger = 'immediate',
+      func = (function()
+          G.SHOP_SIGN.alignment.offset.y = 0
+          return true
+      end)
+    }))
+    local t = {n=G.UIT.ROOT, config = {align = 'cl', colour = G.C.CLEAR}, nodes={
+            UIBox_dyn_container({
+                {n=G.UIT.C, config={align = "cm", padding = 0.1, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
+                    {n=G.UIT.R, config={align = "cm", padding = 0.05}, nodes={
+                      {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={
+                        {n=G.UIT.R,config={id = 'next_round_button', align = "cm", minw = 2.8, minh = 1.5, r=0.15,colour = G.C.BLUE, one_press = true, button = 'toggle_shop', hover = true,shadow = true}, nodes = {
+                          {n=G.UIT.R, config={align = "cm", padding = 0.07, focus_args = {button = 'y', orientation = 'cr'}, func = 'set_button_pip'}, nodes={
+                            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
+                              {n=G.UIT.T, config={text = localize('b_next_round_1'), scale = 0.4, colour = G.C.WHITE, shadow = true}}
+                            }},
+                            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
+                              {n=G.UIT.T, config={text = localize('b_next_round_2'), scale = 0.4, colour = G.C.WHITE, shadow = true}}
+                            }}   
+                          }},              
+                        }},
+                        {n=G.UIT.R, config={align = "cm", minw = 2.8, minh = 0.75, r=0.15,colour = G.C.GREEN, button = 'reroll_shop', func = 'can_reroll', hover = true,shadow = true}, nodes = {
+                          {n=G.UIT.R, config={align = "cm", padding = 0.07, focus_args = {button = 'x', orientation = 'cr'}, func = 'set_button_pip'}, nodes={
+                            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
+                              {n=G.UIT.T, config={text = localize('k_reroll'), scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                              {n=G.UIT.T, config={text = " " .. localize('$'), scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                              {n=G.UIT.T, config={ref_table = G.GAME.current_round, ref_value = 'reroll_cost', scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                            }},
+                          }}
+                        }},
+                        {n=G.UIT.R, config={align = "cm", minw = 2.8, minh = 0.75, r=0.15,colour = G.C.PURPLE, button = 'super_reroll_shop', func = 'super_can_reroll', hover = true,shadow = true}, nodes = {
+                          {n=G.UIT.R, config={align = "cm", padding = 0.07, focus_args = {button = 'x', orientation = 'cr'}, func = 'set_button_pip'}, nodes={
+                            {n=G.UIT.R, config={align = "cm", maxw = 2.0}, nodes={
+                              {n=G.UIT.T, config={text = "Mega Reroll", scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                              {n=G.UIT.T, config={text = " " .. localize('$'), scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                              {n=G.UIT.T, config={ref_table = G.GAME.current_round, ref_value = 'super_reroll_cost', scale = 0.5, colour = G.C.WHITE, shadow = true}},
+                            }},
+                          }}
+                        }},
+                      }},
+                      {n=G.UIT.C, config={align = "cm", padding = 0.2, r=0.2, colour = G.C.GREEN, emboss = 0.05, minw = 5.95}, nodes={
+                          {n=G.UIT.O, config={object = G.shop_jokers}},
+                      }},
+                      {n=G.UIT.C, config={align = "cm", padding = 0.2, r=0.2, colour = G.C.PURPLE, emboss = 0.05, minw = 1.85}, nodes={
+                          {n=G.UIT.O, config={object = G.special_card}},
+                      }},
+                    }},
+                    {n=G.UIT.R, config={align = "cm", minh = 0.2}, nodes={}},
+                    {n=G.UIT.R, config={align = "cm", padding = 0.1}, nodes={
+                      {n=G.UIT.C, config={align = "cm", padding = 0.15, r=0.2, colour = G.C.L_BLACK, emboss = 0.05}, nodes={
+                        {n=G.UIT.C, config={align = "cm", padding = 0.2, r=0.2, colour = G.C.BLACK, maxh = G.shop_vouchers.T.h+0.4}, nodes={
+                          {n=G.UIT.T, config={text = localize{type = 'variable', key = 'ante_x_voucher', vars = {G.GAME.round_resets.ante}}, scale = 0.45, colour = G.C.L_BLACK, vert = true}},
+                          {n=G.UIT.O, config={object = G.shop_vouchers}},
+                        }},
+                      }},
+                      {n=G.UIT.C, config={align = "cm", padding = 0.15, r=0.2, colour = G.C.PURPLE, emboss = 0.05}, nodes={
+                        {n=G.UIT.O, config={object = G.shop_booster}},
+                      }},
+                    }}
+                }
+              },
+              
+              }, false)
+        }}
+    return t
+end
+
+function handle_special_shop_card(nosave_shop, reroll)
+    if G.special_card and G.GAME.super_shop and G.load_special_card and not reroll then
+        G.special_card:load(G.load_special_card)
+        for k, v in ipairs(G.special_card.cards) do
+            create_shop_card_ui(v)
+            if v.ability.consumeable then v:start_materialize() end
+        end
+        G.load_special_card = nil
+        return true
+    elseif G.special_card and G.GAME.super_shop then
+        local num = pseudorandom(pseudoseed('special'))
+        if num < 0.25 then
+            local card = create_card("Joker", G.special_card, nil, nil, nil, nil, 'j_credit_card', 'sho')
+            create_shop_card_ui(card, card.type, G.special_card)
+            card:set_edition({negative = true})
+            card:set_eternal(nil)
+            card:set_perishable(true)
+            card.ability.perish_tally = 1
+            G.special_card:emplace(card)
+        elseif num < 0.55 then
+            local num2 = pseudorandom(pseudoseed('rarity')) * 0.04
+            local card = create_card("Joker", G.special_card, nil, 0.96 + num2, nil, nil, nil, 'sho')
+            create_shop_card_ui(card, card.type, G.special_card)
+            local num3 = pseudorandom(pseudoseed('edition'))
+            if (num3 < 0.4) then
+                card:set_edition({negative = true})
+            else
+                card:set_edition({polychrome = true})
+            end
+            G.special_card:emplace(card)
+        elseif num < 0.9 then
+            local cume, it, center = 0, 0, nil
+            local megas = {}
+            for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
+                if (v.config.choose == 2) and not G.GAME.banned_keys[v.key] then cume = cume + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1 ); table.insert(megas, v) end
+            end
+            local poll = pseudorandom(pseudoseed(('pack_special')..G.GAME.round_resets.ante))*cume
+            for k, v in ipairs(megas) do
+                if not G.GAME.banned_keys[v.key] then 
+                    if not _type or _type == v.kind then it = it + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) end
+                    if it >= poll and it - ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) <= poll then center = v; break end
+                end
+            end
+            local card = Card(G.special_card.T.x + G.special_card.T.w/2,
+            G.special_card.T.y, G.CARD_W, G.CARD_H, G.P_CARDS.empty, G.P_CENTERS[center.key], {bypass_discovery_center = true, bypass_discovery_ui = true})
+            create_shop_card_ui(card, 'Booster', G.special_card)
+            card:start_materialize()
+            G.special_card:emplace(card)
+        elseif num < 0.98 then
+            local card = create_card('Spectral', G.special_card, nil, nil, nil, nil, nil, 'sho')
+            create_shop_card_ui(card, card.type, G.special_card)
+            card:start_materialize()
+            G.special_card:emplace(card)
+        else
+            local card = create_card('Spectral', G.special_card, nil, nil, nil, nil, 'c_soul', 'sho')
+            create_shop_card_ui(card, card.type, G.special_card)
+            card:start_materialize()
+            G.special_card:emplace(card)
+        end
+    end
+    return nosave_shop
+end
+
+G.FUNCS.super_reroll_shop = function(e) 
+    stop_use()
+    ease_dollars(-G.GAME.current_round.super_reroll_cost)
+    G.GAME.current_round.super_reroll_cost = (G.GAME.current_round.super_reroll_cost or 10) + 5
+    G.CONTROLLER.locks.shop_reroll = true
+    if G.CONTROLLER:save_cardarea_focus('shop_booster') and G.CONTROLLER:save_cardarea_focus('special_card') then G.CONTROLLER.interrupt.focus = true end
+    G.E_MANAGER:add_event(Event({
+        trigger = 'immediate',
+        func = function()
+          for i = #G.shop_booster.cards,1, -1 do
+            local c = G.shop_booster:remove_card(G.shop_booster.cards[i])
+            c:remove()
+            c = nil
+          end
+
+          for i = #G.special_card.cards,1, -1 do
+            local c = G.special_card:remove_card(G.special_card.cards[i])
+            c:remove()
+            c = nil
+          end
+
+          --save_run()
+
+          play_sound('coin2')
+          play_sound('other1')
+          
+          G.GAME.current_round.used_packs = {}
+          for i = 1, 2 do
+            G.GAME.current_round.used_packs = G.GAME.current_round.used_packs or {}
+            if not G.GAME.current_round.used_packs[i] then
+                G.GAME.current_round.used_packs[i] = get_pack('shop_pack').key
+            end
+
+            if G.GAME.current_round.used_packs[i] ~= 'USED' then 
+                local card = Card(G.shop_booster.T.x + G.shop_booster.T.w/2,
+                G.shop_booster.T.y, G.CARD_W*(G.P_CENTERS[G.GAME.current_round.used_packs[i]].set == 'Booster' and 1.27 or 1), G.CARD_H*(G.P_CENTERS[G.GAME.current_round.used_packs[i]].set == 'Booster' and 1.27 or 1), G.P_CARDS.empty, G.P_CENTERS[G.GAME.current_round.used_packs[i]], {bypass_discovery_center = true, bypass_discovery_ui = true})
+                                                                create_shop_card_ui(card, 'Booster', G.shop_booster)
+                card.ability.booster_pos = i
+                card:start_materialize()
+                G.shop_booster:emplace(card)
+            end
+          end
+          handle_special_shop_card(nil, true)
+          return true
+        end
+      }))
+      G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        delay = 0.3,
+        func = function()
+        G.E_MANAGER:add_event(Event({
+          func = function()
+            G.CONTROLLER.interrupt.focus = false
+            G.CONTROLLER.locks.shop_reroll = false
+            G.CONTROLLER:recall_cardarea_focus('shop_booster')
+            return true
+          end
+        }))
+        return true
+      end
+    }))
+    G.E_MANAGER:add_event(Event({ func = function() save_run(); return true end}))
+end
+
+G.FUNCS.super_can_reroll = function(e) 
+    if ((G.GAME.dollars-G.GAME.bankrupt_at) - G.GAME.current_round.super_reroll_cost < 0) then 
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+        --e.children[1].children[1].config.shadow = false
+        --e.children[2].children[1].config.shadow = false
+        --e.children[2].children[2].config.shadow = false
+    else
+        e.config.colour = G.C.PURPLE
+        e.config.button = 'super_reroll_shop'
+        --e.children[1].children[1].config.shadow = true
+        --e.children[2].children[1].config.shadow = true
+        --e.children[2].children[2].config.shadow = true
+    end
 end
 
 ----------------------------------------------

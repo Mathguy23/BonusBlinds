@@ -49,6 +49,7 @@ target = 'blind.lua'
 pattern = 'function Blind:load(blindTable)'
 position = 'after'
 payload = '''self.config.bonus = blindTable.bonusy
+self.config.timing = blindTable.timer or 0
 
 '''
 match_indent = true
@@ -59,6 +60,7 @@ target = 'blind.lua'
 pattern = 'return blindTable'
 position = 'before'
 payload = '''blindTable.bonusy = self.config.bonus
+blindTable.timer = self.config.timing or 0
     '''
 match_indent = true
 
@@ -207,3 +209,49 @@ payload = '''if G.GAME.blind and G.GAME.blind.config and G.GAME.blind.config.bon
     ret = ret + G.GAME.blind.config.bonus.dollars_score
 end'''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/UI_definitions.lua'
+pattern = '''function G.UIDEF.shop()'''
+position = 'after'
+payload = '''if G.GAME.super_shop then return coolShop() end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''G.FUNCS.toggle_shop = function(e)'''
+position = 'after'
+payload = '''G.GAME.super_shop = nil'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+pattern = '''if not shop_exists then'''
+position = 'after'
+payload = '''   nosave_shop = handle_special_shop_card(nosave_shop)'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+pattern = '''self.load_shop_vouchers = nil'''
+position = 'after'
+payload = '''self.load_special_card = nil'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''G.shop_jokers.T.w = G.GAME.shop.joker_max*1.01*G.CARD_W'''
+position = 'at'
+payload = '''if G.GAME.super_shop then
+    G.shop_jokers.T.w = math.min(3, G.GAME.shop.joker_max)*1.01*G.CARD_W 
+else 
+    G.shop_jokers.T.w = G.GAME.shop.joker_max*1.01*G.CARD_W
+end'''
+match_indent = true
+overwrite = true
+
