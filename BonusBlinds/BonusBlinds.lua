@@ -1426,9 +1426,9 @@ SMODS.Blind {
     end,
     get_loc_debuff_text = function(self)
         if G.GAME.blind.config.timing <= 0 then
-            return "Times Up"
+            return localize('bl_countdown_debuff1')
         end
-        return "Hands allowed for 1:00"
+        return localize('bl_countdown_debuff1')
     end,
     in_pool = function(self)
         return false
@@ -1842,6 +1842,8 @@ function SMODS.current_mod.process_loc_text()
     }
     G.localization.misc.dictionary["k_blind_pack"] = "Blind Pack"
     G.localization.misc.dictionary["bl_watch_debuff"] = "Must play 5 Cards and no repeat hand types this round"
+    G.localization.misc.dictionary["bl_countdown_debuff1"] = "Times up"
+    G.localization.misc.dictionary["bl_countdown_debuff2"] = "Hands allowed for 1:00"
     G.localization.descriptions.Other["bl_watch"] = {}
     G.localization.descriptions.Other["bl_watch"].text = { 'Must play 5 cards.', 'No repeat hand', 'types this round.' }
     G.localization.descriptions.Other["bl_watch"].name = "The Watch"

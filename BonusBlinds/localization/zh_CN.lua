@@ -1,10 +1,12 @@
 return {
 	["misc"] = {
 		["dictionary"] = {
-			["k_bonus"] = "额外盲注",
-			["k_blind_pack"] = "盲注包",
+			["bl_countdown_debuff1"] = "时间到",
+			["bl_countdown_debuff2"] = "允许出牌倒计时：1:00",
 			["bl_watch_debuff"] = "必须出5张牌，不可打出重复牌型",
+			["k_blind_pack"] = "盲注包",
 			["b_bonus_cards"] = "额外盲注",
+			["k_bonus"] = "额外盲注",
 		},
 	},
 	["descriptions"] = {
@@ -14,7 +16,13 @@ return {
 				["text"] = {
 					"提升{C:red}额外盲注{}的出现频率",
 					"大大增加{C:attention}底注{}提升时",
-					"得分要求的涨幅",
+					"得分要求的涨幅"
+				},
+			},
+			["b_bb_mall"] = {
+				["name"] = "大商场牌组",
+				["text"] = {
+					"击败{C:attention}Boss盲注{}后，进入{C:purple}超级商店",
 				},
 			},
 		},
@@ -37,6 +45,12 @@ return {
 			["bl_wheel"] = {
 				["text"] = {
 					"#1#/7的几率，抽到的牌",
+				},
+			},
+			["bl_bb_countdown"] = {
+				["name"] = "倒计时",
+				["text"] = {
+					"允许出牌倒计时：#1#",
 				},
 			},
 		},
@@ -70,7 +84,7 @@ return {
 				["name"] = "“终章剧透”",
 				["text"] = {
 					"在当前{C:attention}底注{}中",
-					"对阵{C:attention}底注#1#{}的{C:attention}关底盲注",
+					"对阵{C:attention}底注#1#{}的{C:attention}决战盲注",
 				},
 			},
 			["c_bb_rewind"] = {
@@ -81,10 +95,10 @@ return {
 				},
 			},
 			["c_bb_champion"] = {
-				["name"] = "Champion Blind",
+				["name"] = "“拔得头筹”",
 				["text"] = {
-					"{C:attention}-#1#{} Antes then play",
-					"a {C:blue}Showdown Blind{}",
+					"底注{C:attention}-#1#",
+					"对阵随机的{C:blue}决战盲注",
 				},
 			},
 			["c_bb_locked"] = {
@@ -94,26 +108,41 @@ return {
 					"手牌上限{C:attention}-#2#",
 				},
 			},
-			["c_bb_hankercheif"] = {
-				["name"] = "Hankercheif Blind",
+			["c_bb_roulette"] = {
+				["name"] = "“轮盘赌博”",
 				["text"] = {
-					"Play {C:attention}#1#{}. Earn {C:money}$1{} when",
-					"a playing card is scored",
+					"对阵{C:attention}#1#{}. ",
+					"有{C:green}#2#/#3#{}的几率{C:attention}+#4#{}底注",
+					"{C:inactive}（无法在底注{C:attention}#5#{C:inactive}和{C:attention}#6#{C:inactive}中使用）",
+				},
+			},
+			["c_bb_quick"] = {
+				["name"] = "“心急火燎”",
+				["text"] = {
+					"对阵{C:red}#1#",
+				},
+			},
+			["c_bb_hankercheif"] = {
+				["name"] = "“绣花手绢”",
+				["text"] = {
+					"对阵{C:attention}#1#",
+					"每张扑克牌计分时",
+					"获得{C:money}$1",
 				},
 			},
 			["c_bb_luck"] = {
-				["name"] = "Lucky Blind",
+				["name"] = "“时来运转”",
 				["text"] = {
-					"Defeat a {C:attention}Blind{} with ",
-					"{C:blue}#1#{} Hand and {C:red}#2#{} Discard",
-					"to get #3# {C:attention}#4#s{}",
+					"以{C:blue}#1#{}次出牌和{C:red}#2#{}次弃牌",
+					"对阵一个{C:attention}盲注",
+					"击败后，获得#3#个{C:attention}#4#",
 				},
 			},
 			["c_bb_magma"] = {
-				["name"] = "Magma Blind",
+				["name"] = "“烈焰滚滚”",
 				["text"] = {
-					"Defeat {C:blue}#1#{} to",
-					"{C:attention}destroy{} cards {C:attention}held in hand{}",
+					"对阵{C:blue}#1#",
+					"击败后，{C:attention}摧毁{}所有{C:attention}手牌",
 				},
 			},
 			["c_bb_redo"] = {
@@ -123,19 +152,28 @@ return {
 					"成功击败后，获得{C:attention}#2#",
 				},
 			},
-			["c_bb_fixed"] = {
-				["name"] = "“稳定三角”",
+			["c_bb_mall"] = {
+				["name"] = "“货真价实”",
+				["text"] = {
+					"对阵随机的{C:blue}决战盲注",
+					"击败后，进入{C:purple}超级商店",
+				},
+			},
+			["c_bb_sky"] = {
+				["name"] = "“晴空万里”",
 				["text"] = {
 					"对阵{C:blue}#1#",
-					"所有{C:attention}小丑牌",
-					"均将遭到{C:attention}左极固定",
+					"将{C:attention}最优{}牌型的",
+					"基础得分的{C:attention}双倍",
+					"加值至{C:blue}最低得分要求",
+					"{C:inactive}（当前最优牌型：{C:attention} #2#{C:inactive}）",
 				},
 			},
 			["c_bb_patch"] = {
-				["name"] = "Patched Blind",
+				["name"] = "“缝缝补补”",
 				["text"] = {
-					"Defeat a {C:attention}Blind{}",
-					"for a {C:attention}reward{}",
+					"对阵一个{C:attention}盲注",
+					"击败后，获得{C:attention}奖励",
 				},
 			},
 			["c_bb_lottery"] = {
@@ -173,14 +211,12 @@ return {
 					"对阵{C:blue}#3#",
 				},
 			},
-			["c_bb_sky"] = {
-				["name"] = "“晴空万里”",
+			["c_bb_fixed"] = {
+				["name"] = "“稳定三角”",
 				["text"] = {
 					"对阵{C:blue}#1#",
-					"将{C:attention}最优{}牌型的",
-					"基础得分的{C:attention}双倍",
-					"加值至{C:blue}最低得分要求",
-					"{C:inactive}（当前最优牌型：{C:attention} #2#{C:inactive}）",
+					"所有{C:attention}小丑牌",
+					"均将遭到{C:attention}左极固定",
 				},
 			},
 			["c_bb_watching"] = {
@@ -245,10 +281,10 @@ return {
 		},
 		["Other"] = {
 			["t_irony"] = {
-				["name"] = "Ironic Tag",
+				["name"] = "叙事标签",
 				["text"] = {
-					"Gives a free",
-					"{C:red}Jumbo Blind Pack",
+					"免费生成一个",
+					"{C:red}巨型盲注包",
 				},
 			},
 			["bl_violet"] = {
@@ -258,10 +294,11 @@ return {
 				},
 			},
 			["p_jumbo_bl"] = {
-				["name"] = "Jumbo Blind Pack",
+				["name"] = "巨型盲注包",
 				["text"] = {
-					"Choose {C:attention}1{} of up to",
-					"{C:attention}5{C:red} Bonus Blinds{}",
+					"从最多{C:attention}5{}张",
+					"{C:red}额外盲注{}中",
+					"选择{C:attention}1{}张",
 				},
 			},
 			["p_bb_blind_jumbo_1"] = {
@@ -313,11 +350,10 @@ return {
 					"总是被选定",
 				},
 			},
-			["bl_snatch"] = {
-				["name"] = "钩子",
+			["bl_countdown"] = {
+				["name"] = "倒计时",
 				["text"] = {
-					"每次出牌",
-					"随机弃掉2张手牌",
+					"允许出牌倒计时：1:00",
 				},
 			},
 			["blind_ox"] = {
@@ -354,6 +390,13 @@ return {
 				["name"] = "未发现的盲注",
 				["text"] = {
 					"我不到啊",
+				},
+			},
+			["bl_snatch"] = {
+				["name"] = "钩子",
+				["text"] = {
+					"每次出牌",
+					"随机弃掉2张手牌",
 				},
 			},
 		},
