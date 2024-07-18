@@ -177,17 +177,19 @@ return {
 				},
 			},
 			["c_bb_lottery"] = {
-				["name"] = "Lottery Blind",
+				["name"] = "“刮刮彩票”",
 				["text"] = {
-					"Add {C:red}+#1#{} Mult to {C:attention}#2#{} random",
-					"{C:attention}playing card{} then play {C:attention}#3#{}",
+					"给予随机{C:attention}#2#{}张{C:attention}扑克牌",
+					"{C:red}+#1#{}额外倍率",
+					"并对阵{C:attention}#3#",
 				},
 			},
 			["c_bb_dice"] = {
-				["name"] = "Dice Blind",
+				["name"] = "“再掷一次”",
 				["text"] = {
-					"Defeat a {C:attention}Boss Blind{} for",
-					"{C:attention}#1#{} free {C:green}rerolls{} next shop",
+					"对阵随机的{C:attention}Boss{}盲注",
+					"击败后，在下次商店内",
+					"获得{C:attention}#1#{}次免费{C:green}重掷",
 				},
 			},
 			["c_bb_combo"] = {
@@ -248,10 +250,11 @@ return {
 				},
 			},
 			["c_bb_disco"] = {
-				["name"] = "Disco Blind",
+				["name"] = "“歌舞醉梦”",
 				["text"] = {
-					"Play {C:blue}#1#{}. Shuffle",
-					"{C:attention}Stickers{} each {C:blue}hand{}",
+					"对阵{C:blue}#1#",
+					"每次{C:blue}出牌{}时",
+					"打乱小丑牌的{C:attention}标贴",
 				},
 			},
 			["c_bb_cruel"] = {
@@ -263,19 +266,20 @@ return {
 				},
 			},
 			["c_bb_meta"] = {
-				["name"] = "Meta Blind",
+				["name"] = "“开天辟地”",
 				["text"] = {
-					"Activate a {C:red}Common Bonus Blind{}. Upon",
-					"blind defeat, get an {C:attention}#1#{}",
+					"激活一个{C:red}普通级额外盲注",
+					"击败后，获得{C:attention}#1#",
 				},
 			},
 			["c_bb_natural"] = {
-				["name"] = "Supernatural Blind",
+				["name"] = "“奇珍异兽”",
 				["text"] = {
-					"Play {C:green}The Serpent{}. All",
-					"{C:attention}Jokers{} are {C:attention}Eternal{} for",
-					"this blind. {C:attention}+1{} {C:dark_edition}Negative{}",
-					"{C:spectral}Spectral{} each {C:blue}hand{}.",
+					"对阵{C:green}蛇",
+					"回合内所有{C:attention}小丑牌",
+					"均成为{C:attention}永恒",
+					"每次{C:blue}出牌{}时",
+					"获得{C:attention}1{}张{C:dark_edition}负片{C:spectral}幻灵牌",
 				},
 			},
 		},
