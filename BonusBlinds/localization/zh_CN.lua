@@ -74,10 +74,10 @@ return {
 				},
 			},
 			["c_bb_rewind"] = {
-				["name"] = "Rewind Blind",
+				["name"] = "“前情回顾”",
 				["text"] = {
-					"Play the last {C:attention}blind{}",
-					"with {C:blue}X2 Hands{}",
+					"以{C:blue}两倍{}的{C:blue}出牌次数",
+					"对阵上一个被击败的{C:attention}盲注",
 				},
 			},
 			["c_bb_champion"] = {
@@ -124,7 +124,7 @@ return {
 				},
 			},
 			["c_bb_fixed"] = {
-				["name"] = "“岿然不动”",
+				["name"] = "“稳定三角”",
 				["text"] = {
 					"对阵{C:blue}#1#",
 					"所有{C:attention}小丑牌",
