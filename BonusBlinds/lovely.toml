@@ -255,3 +255,38 @@ end'''
 match_indent = true
 overwrite = true
 
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if self.ability.name == 'Rocket' and G.GAME.blind.boss then'''
+position = 'at'
+payload = '''if self.ability.name == 'Rocket' and G.GAME.blind.boss and not (G.GAME.blind.config and  G.GAME.blind.bonus) then'''
+match_indent = true
+overwrite = true
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if self.ability.name == 'Campfire' and G.GAME.blind.boss and self.ability.x_mult > 1 then'''
+position = 'at'
+payload = '''if self.ability.name == 'Campfire' and G.GAME.blind.boss and not (G.GAME.blind.config and  G.GAME.blind.bonus) and self.ability.x_mult > 1 then'''
+match_indent = true
+overwrite = true
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''local disableable = G.GAME.blind and ((not G.GAME.blind.disabled) and (G.GAME.blind:get_type() == 'Boss'))'''
+position = 'after'
+payload = '''disableable = (disableable == true) or (G.GAME.blind and (G.GAME.blind:get_type() == 'Bonus') and G.GAME.blind.boss)'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if G.GAME.blind and ((not G.GAME.blind.disabled) and (G.GAME.blind:get_type() == 'Boss')) then'''
+position = 'at'
+payload = '''if G.GAME.blind and ((not G.GAME.blind.disabled) and ((G.GAME.blind:get_type() == 'Boss') or ((G.GAME.blind:get_type() == 'Bonus') and G.GAME.blind.boss))) then'''
+match_indent = true
+overwrite = true
+
