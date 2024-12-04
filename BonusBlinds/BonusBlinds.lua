@@ -957,7 +957,7 @@ SMODS.Bonus {
     loc_txt = {
         name = "Patched Blind",
         text = {
-            "Defeat a {C:attention}Blind{}",
+            "Defeat {C:attention}#1#{}",
             "for a {C:attention}reward{}"
         }
     },
@@ -966,19 +966,14 @@ SMODS.Bonus {
     cost = 3,
     rarity = 'Uncommon',
     set_ability = function(self, card, initial, delay_sprites)
+        card.ability.the_blind = 'bl_plant'
     end,
     loc_vars = function(self, info_queue, card)
-        return {vars = {}}
+        info_queue[#info_queue+1] = {key = 'blind_plant', set = 'Other'}
+        return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}}}
     end,
     use2 = function(self, card, area, copier)
-        local rngpick = {}
-        for i, j in pairs(G.P_BLINDS) do
-            if not j.boss or not j.boss.bonus then
-                table.insert(rngpick, i)
-            end
-        end
-        local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
-        bonus_selection(blind, {rand_reward = true})
+        bonus_selection(card.ability.the_blind, {rand_reward = true})
     end,
     in_pool = function(self)
         return (not not G.GAME.pool_flags.failed_broken_blind), {allow_duplicates = false}
@@ -1714,6 +1709,12 @@ SMODS.Booster {
     },
     weight = 0.3,
     name = "Blind Pack",
+    get_weight = function(self)
+        if (G.GAME.selected_back.name == "Ante Deck") then
+            return self.weight * 5
+        end
+        return self.weight
+    end,
     pos = {x = 0, y = 0},
     config = {extra = 3, choose = 1, name = "Blind Pack"},
     create_card = function(self, card)
@@ -1734,6 +1735,12 @@ SMODS.Booster {
     },
     weight = 0.3,
     name = "Blind Pack",
+    get_weight = function(self)
+        if (G.GAME.selected_back.name == "Ante Deck") then
+            return self.weight * 5
+        end
+        return self.weight
+    end,
     pos = {x = 1, y = 0},
     config = {extra = 3, choose = 1, name = "Blind Pack"},
     create_card = function(self, card)
@@ -1755,6 +1762,12 @@ SMODS.Booster {
     weight = 0.3,
     cost = 6,
     name = "Jumbo Blind Pack",
+    get_weight = function(self)
+        if (G.GAME.selected_back.name == "Ante Deck") then
+            return self.weight * 5
+        end
+        return self.weight
+    end,
     pos = {x = 0, y = 1},
     config = {extra = 5, choose = 1, name = "Blind Pack"},
     create_card = function(self, card)
@@ -1776,6 +1789,12 @@ SMODS.Booster {
     weight = 0.07,
     cost = 8,
     name = "Mega Blind Pack",
+    get_weight = function(self)
+        if (G.GAME.selected_back.name == "Ante Deck") then
+            return self.weight * 5
+        end
+        return self.weight
+    end,
     pos = {x = 1, y = 1},
     config = {extra = 5, choose = 2, name = "Blind Pack"},
     create_card = function(self, card)
@@ -2552,6 +2571,9 @@ function SMODS.current_mod.process_loc_text()
     G.localization.descriptions.Other["blind_wheel"] = {}
     G.localization.descriptions.Other["blind_wheel"].text = { "#1# in #2# cards get", "drawn face down" }
     G.localization.descriptions.Other["blind_wheel"].name = localize{type ='name_text', key = 'bl_wheel', set = 'Blind'}
+    G.localization.descriptions.Other["blind_plant"] = {}
+    G.localization.descriptions.Other["blind_plant"].text = {"All face cards", "are debuffed" }
+    G.localization.descriptions.Other["blind_plant"].name = localize{type ='name_text', key = 'bl_plant', set = 'Blind'}
     G.localization.descriptions.Other["perkeo_note"] = {}
     G.localization.descriptions.Other["perkeo_note"].text = { "{C:attention}Shops{} from {C:red}Bonus Blinds{}", "spawned by {C:attention}Perkeo{} do not", "activate {C:attention}Perkeo{}" }
     G.localization.descriptions.Other["perkeo_note"].name = "Important Note"

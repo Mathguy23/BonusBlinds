@@ -191,33 +191,6 @@ match_indent = true
 
 [[patches]]
 [patches.pattern]
-target = 'functions/common_events.lua'
-pattern = '''if not _type or _type == v.kind then it = it + (v.weight or 1) end'''
-position = 'at'
-payload = '''if not _type or _type == v.kind then it = it + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) end'''
-match_indent = true
-overwrite = true
-
-[[patches]]
-[patches.pattern]
-target = 'functions/common_events.lua'
-pattern = '''if it >= poll and it - (v.weight or 1) <= poll then center = v; break end'''
-position = 'at'
-payload = '''if it >= poll and it - ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) <= poll then center = v; break end'''
-match_indent = true
-overwrite = true
-
-[[patches]]
-[patches.pattern]
-target = 'functions/common_events.lua'
-pattern = '''if (not _type or _type == v.kind) and not G.GAME.banned_keys[v.key] then cume = cume + (v.weight or 1 ) end'''
-position = 'at'
-payload = '''if (not _type or _type == v.kind) and not G.GAME.banned_keys[v.key] then cume = cume + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1 ) end'''
-match_indent = true
-overwrite = true
-
-[[patches]]
-[patches.pattern]
 target = 'card.lua'
 pattern = '''local ret = 0'''
 position = 'after'
