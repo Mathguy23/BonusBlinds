@@ -2067,10 +2067,10 @@ function bonus_new_round(theBlind, bonusData)
             G.GAME.subhash = (G.GAME.round_resets.ante)..(blhash)
 
             -- local customBlind = {name = 'The Ox', defeated = false, order = 4, dollars = 5, mult = 2,  vars = {localize('ph_most_played')}, debuff = {}, pos = {x=0, y=2}, boss = {min = 6, max = 10, bonus = true}, boss_colour = HEX('b95b08')}
+            G.GAME.blind_on_deck = 'Bonus'
             G.GAME.blind:set_blind(G.P_BLINDS[theBlind])
             G.GAME.blind.config.bonus = bonusData
             G.GAME.last_blind.boss = nil
-            G.GAME.blind_on_deck = 'Bonus'
             if not next(SMODS.find_card("j_bb_change")) then
                 G.GAME.blind.dollars = 0
                 G.GAME.current_round.dollars_to_be_earned = ''
