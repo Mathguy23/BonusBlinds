@@ -1442,7 +1442,7 @@ SMODS.Tag {
         }
     },
     pos = {x = 0, y = 0},
-    apply = function(tag, context)
+    apply = function(self, tag, context)
         if context.type == 'new_blind_choice' then
             local lock = tag.ID
             G.CONTROLLER.locks[lock] = true
@@ -1481,7 +1481,7 @@ SMODS.Tag {
         }
     },
     pos = {x = 1, y = 0},
-    apply = function(tag, context)
+    apply = function(self, tag, context)
         if context.type == 'tag_add' and ((context.tag.key ~= 'tag_bb_zero') and (context.tag.key ~= 'tag_bb_null')) then
             local lock = tag.ID
             G.CONTROLLER.locks[lock] = true
@@ -1531,7 +1531,7 @@ SMODS.Tag {
     },
     name = "Null Tag",
     pos = {x = 2, y = 0},
-    apply = function(tag, context)
+    apply = function(self, tag, context)
     end,
     in_pool = function(self)
         return false
@@ -1551,7 +1551,7 @@ SMODS.Tag {
     },
     name = "Antichrome Tag",
     pos = {x = 3, y = 0},
-    apply = function(tag, context)
+    apply = function(self, tag, context)
         local _applied = nil
         if not context.card.edition and not context.card.temp_edition and context.card.ability.set == 'Joker' then
             local lock = tag.ID
