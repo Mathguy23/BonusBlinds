@@ -2064,7 +2064,7 @@ function bonus_new_round(theBlind, bonusData)
             end
 
             local chaos = find_joker('Chaos the Clown')
-            G.GAME.current_round.free_rerolls = #chaos
+            G.GAME.current_round.free_rerolls = G.GAME.current_round.free_rerolls + (G.GAME.current_round.ortalab_rerolls or 0)
             calculate_reroll_cost(true)
 
             G.GAME.round_bonus.next_hands = 0
