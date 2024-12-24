@@ -1553,7 +1553,7 @@ SMODS.Tag {
     pos = {x = 3, y = 0},
     apply = function(self, tag, context)
         local _applied = nil
-        if not context.card.edition and not context.card.temp_edition and context.card.ability.set == 'Joker' then
+        if context.card and not context.card.edition and not context.card.temp_edition and context.card.ability.set == 'Joker' then
             local lock = tag.ID
             G.CONTROLLER.locks[lock] = true
             context.card.temp_edition = true
@@ -2064,7 +2064,7 @@ function bonus_new_round(theBlind, bonusData)
             end
 
             local chaos = find_joker('Chaos the Clown')
-            G.GAME.current_round.free_rerolls = G.GAME.current_round.free_rerolls + (G.GAME.current_round.ortalab_rerolls or 0)
+            G.GAME.current_round.free_rerolls = #chaos
             calculate_reroll_cost(true)
 
             G.GAME.round_bonus.next_hands = 0
