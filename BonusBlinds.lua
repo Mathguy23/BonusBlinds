@@ -1403,33 +1403,33 @@ SMODS.Bonus {
 
 -----------------
 
-SMODS.Spectral {
-    key = 'loop',
-    loc_txt = {
-        name = "Loop",
-        text = {
-            "Create a non-{C:red}Common{}",
-            "{C:red}Bonus Blind{}"
-        }
-    },
-    atlas = "loops",
-    pos = {x = 0, y = 0},
-    use = function(self, card, area, copier)
-        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
-            play_sound('timpani')
-            local rarity = 0.765 + (pseudorandom(pseudoseed('loop')) * 0.235)
-            local card = create_card("Bonus", G.consumeables, nil, 0.765)
-            card:add_to_deck()
-            G.consumeables:emplace(card)
-            card:juice_up(0.3, 0.5)
-            return true
-        end}))
-        delay(0.6)
-    end,
-    can_use = function(self, card)
-        return (#G.consumeables.cards < G.consumeables.config.card_limit) or (card.area == G.consumeables)
-    end
-}
+-- SMODS.Spectral {
+--     key = 'loop',
+--     loc_txt = {
+--         name = "Loop",
+--         text = {
+--             "Create a non-{C:red}Common{}",
+--             "{C:red}Bonus Blind{}"
+--         }
+--     },
+--     atlas = "loops",
+--     pos = {x = 0, y = 0},
+--     use = function(self, card, area, copier)
+--         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+--             play_sound('timpani')
+--             local rarity = 0.765 + (pseudorandom(pseudoseed('loop')) * 0.235)
+--             local card = create_card("Bonus", G.consumeables, nil, 0.765)
+--             card:add_to_deck()
+--             G.consumeables:emplace(card)
+--             card:juice_up(0.3, 0.5)
+--             return true
+--         end}))
+--         delay(0.6)
+--     end,
+--     can_use = function(self, card)
+--         return (#G.consumeables.cards < G.consumeables.config.card_limit) or (card.area == G.consumeables)
+--     end
+-- }
 
 SMODS.Tag {
     key = 'ironic',
