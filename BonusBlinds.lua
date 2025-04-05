@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.5.7
+--- VERSION: 1.5.8 c
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -1403,34 +1403,6 @@ SMODS.Bonus {
 
 -----------------
 
--- SMODS.Spectral {
---     key = 'loop',
---     loc_txt = {
---         name = "Loop",
---         text = {
---             "Create a non-{C:red}Common{}",
---             "{C:red}Bonus Blind{}"
---         }
---     },
---     atlas = "loops",
---     pos = {x = 0, y = 0},
---     use = function(self, card, area, copier)
---         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
---             play_sound('timpani')
---             local rarity = 0.765 + (pseudorandom(pseudoseed('loop')) * 0.235)
---             local card = create_card("Bonus", G.consumeables, nil, 0.765)
---             card:add_to_deck()
---             G.consumeables:emplace(card)
---             card:juice_up(0.3, 0.5)
---             return true
---         end}))
---         delay(0.6)
---     end,
---     can_use = function(self, card)
---         return (#G.consumeables.cards < G.consumeables.config.card_limit) or (card.area == G.consumeables)
---     end
--- }
-
 SMODS.Tag {
     key = 'ironic',
     atlas = 'bonus_tags',
@@ -1885,7 +1857,13 @@ SMODS.Edition {
         x_mult = 2,
         card_limit = 2,
         antichrome_rounds = 3,
-    }
+    },
+    in_shop = false,
+    calculate = function(self, card, context)
+        if context.end_of_round and not context.repetition and not context.individual then
+            card:calculate_antichrome()
+        end
+    end
 }
 
 function Card:calculate_antichrome()
@@ -2274,8 +2252,8 @@ function bonus_start_effect(bonusData)
             table.insert(chosen, card)
         end
         for i, j in pairs(chosen) do
-            j.ability.perma_bonus_mult = j.ability.perma_bonus_mult or 0
-            j.ability.perma_bonus_mult = j.ability.perma_bonus_mult + bonusData.lotto.amount
+            j.ability.perma_mult = j.ability.perma_mult or 0
+            j.ability.perma_mult = j.ability.perma_mult + bonusData.lotto.amount
         end
     end
     if bonusData.emp_jkr then
@@ -2680,6 +2658,18 @@ G.FUNCS.can_select_card = function(e)
             e.config.button = 'use_card'
         end
     end
+end
+
+local old_flipped = Blind.stay_flipped
+function Blind:stay_flipped(area, card, from_area)
+    if G.GAME.blind.config.bonus and G.GAME.blind.config.bonus.face_down then
+        if area == G.hand then
+            if pseudorandom(pseudoseed('wheel')) < G.GAME.blind.config.bonus.face_down then
+                return true
+            end
+        end
+    end
+    old_flipped(self, area, card, from_area)
 end
 
 ---------Super Shop------------------------
