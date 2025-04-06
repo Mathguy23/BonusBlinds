@@ -2669,7 +2669,7 @@ function Blind:stay_flipped(area, card, from_area)
             end
         end
     end
-    old_flipped(self, area, card, from_area)
+    return old_flipped(self, area, card, from_area)
 end
 
 ---------Super Shop------------------------
