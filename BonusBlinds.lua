@@ -2939,12 +2939,15 @@ G.FUNCS.super_reroll_shop = function(e)
 end
 
 G.FUNCS.super_can_reroll = function(e) 
-    if (to_big and ((to_big(G.GAME.dollars)-to_big(G.GAME.bankrupt_at)) - to_big(G.GAME.current_round.super_reroll_cost) < to_big(0))) or ((G.GAME.dollars-G.GAME.bankrupt_at) - G.GAME.current_round.super_reroll_cost < 0) then 
+    if to_big and ((to_big(G.GAME.dollars)-to_big(G.GAME.bankrupt_at)) - to_big(G.GAME.current_round.super_reroll_cost) < to_big(0)) then 
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
         --e.children[1].children[1].config.shadow = false
         --e.children[2].children[1].config.shadow = false
         --e.children[2].children[2].config.shadow = false
+    elseif (to_big == nil) and ((G.GAME.dollars-G.GAME.bankrupt_at) - G.GAME.current_round.super_reroll_cost < 0) then
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
     else
         e.config.colour = G.C.PURPLE
         e.config.button = 'super_reroll_shop'
