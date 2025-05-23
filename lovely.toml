@@ -360,6 +360,14 @@ match_indent = true
 
 [[patches]]
 [patches.pattern]
+target = 'card.lua'
+pattern = '''local card = copy_card(pseudorandom_element(c_pool, pseudoseed('perkeo')), nil)'''
+position = 'after'
+payload = '''card.ability.no_perkeo = true'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
 target = "functions/common_events.lua"
 pattern = "elseif _c.name == 'Perkeo' then info_queue[#info_queue+1] = {key = 'e_negative_consumable', set = 'Edition', config = {extra = 1}}"
 position = "after"
