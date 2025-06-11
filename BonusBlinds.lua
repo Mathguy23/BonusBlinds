@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.6.0
+--- VERSION: 1.6.1
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -277,7 +277,7 @@ SMODS.Bonus {
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
-        bonus_selection(blind, {hands = card.ability.start_hands, card.ability.discard_mult})
+        bonus_selection(blind, {hands = card.ability.start_hands, discard_mult = card.ability.discard_mult})
     end
 }
 
