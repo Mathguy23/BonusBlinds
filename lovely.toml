@@ -399,3 +399,57 @@ pattern = '''G.CONTROLLER.locks.toggle_shop = nil'''
 position = 'after'
 payload = '''G.GAME.disable_perkeo = nil'''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''config.saved and'''
+position = 'after'
+payload = '''(G.GAME.bonus_saved) and {n=G.UIT.C, config={padding = 0.05, align = 'cm'}, nodes={
+    {n=G.UIT.R, config={align = 'cm'}, nodes={
+        {n=G.UIT.O, config={object = DynaText({string = {' '..localize('ph_bonus_pack')..' '}, colours = {G.C.RED}, shadow = true, pop_in = 0, scale = 0.5*scale, silent = true})}}
+    }}
+}} or config.saved and'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''SMODS.saved = false'''
+position = 'after'
+payload = '''G.GAME.bonus_saved = nil
+if game_over and (G.GAME.blind_on_deck == "Bonus") and (#G.playing_cards > 0) then
+    SMODS.saved = true
+    G.GAME.bonus_saved = true
+end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''if total_cashout_rows > 7 then'''
+position = 'before'
+payload = '''::skip_cashing_out2::'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''G.GAME.selected_back:trigger_effect({context = 'eval'})'''
+position = 'after'
+payload = '''if G.GAME.bonus_saved then
+    goto skip_cashing_out
+end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''local i = 0'''
+position = 'at'
+payload = '''::skip_cashing_out::
+local i = 0
+if G.GAME.bonus_saved then
+    goto skip_cashing_out2
+end'''
+match_indent = true

@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.5.9b
+--- VERSION: 1.6.0
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -126,8 +126,11 @@ local bonusType = SMODS.ConsumableType {
         name = 'Bonus Blind',
         collection = 'Bonus Blinds',
         undiscovered = {
-            name = 'Undiscovered Bonus',
-            text = { 'idk stuff ig' },
+            name = 'Not Discovered',
+            text = { "Purchase or use",
+                    "this card in an",
+                    "unseeded run to",
+                    "learn what it does" },
         }
     },
     collection_rows = { 6, 6 },
@@ -222,10 +225,12 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
-            local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
+            local blind = pseudorandom_element(rngpick, pseudoseed((card.area and card.area.config.type == 'title') and 'false_bonus' or 'bonus'))
             card.ability.the_blind = blind
             card.ability.reward = {dollars = math.floor(1.5*G.P_BLINDS[blind].dollars)}
         end
@@ -248,7 +253,8 @@ SMODS.Bonus {
         name = "Needy Blind",
         text = {
             "Play a {C:attention}Boss Blind{}",
-            "with only {C:blue}#1#{} Hand"
+            "with only {C:blue}#1#{} Hand",
+            "and {C:red}X#2# Discards{}"
         }
     },
     atlas = "another",
@@ -256,19 +262,22 @@ SMODS.Bonus {
     rarity = 'Common',
     set_ability = function(self, card, initial, delay_sprites)
         card.ability.start_hands = 1
+        card.ability.discard_mult = 2
     end,
     loc_vars = function(self, info_queue, card)
-        return {vars = {card.ability.start_hands}}
+        return {vars = {card.ability.start_hands, card.ability.discard_mult}}
     end,
     use2 =function(self, card, area, copier)
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and not j.boss.showdown and (i ~= 'bl_needle') and (i ~= 'bl_water') and (i ~= 'bl_cry_tax') and (i ~= 'bl_cruel_tide') and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
-        bonus_selection(blind, {hands = card.ability.start_hands})
+        bonus_selection(blind, {hands = card.ability.start_hands, card.ability.discard_mult})
     end
 }
 
@@ -294,7 +303,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and not j.boss.showdown and (i ~= 'bl_water') and (i ~= 'bl_needle') and (i ~= 'bl_cruel_sword') and (i ~= 'bl_cruel_sink') and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -395,7 +406,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and not j.boss.showdown and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -475,7 +488,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and not j.boss.showdown and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -592,7 +607,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if (i ~= "bl_water") and j.boss and not j.boss.showdown and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -750,7 +767,9 @@ SMODS.Bonus {
             rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and j.boss.showdown and not G.GAME.banned_keys[i] and not preused[i] then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -796,7 +815,9 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -806,7 +827,9 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and not j.boss.bonus and (i ~= 'bl_needle') and (i ~= 'bl_water') and (i ~= 'bl_cry_tax') and (i ~= 'bl_cruel_tide') then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -815,7 +838,9 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and (i ~= 'bl_water') and (i ~= 'bl_needle') and (i ~= 'bl_cruel_sword') and (i ~= 'bl_cruel_sink') and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -830,7 +855,9 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -844,7 +871,9 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -868,20 +897,15 @@ SMODS.Bonus {
             local rngpick = {}
             for i, j in pairs(G.P_BLINDS) do
                 if (i ~= "bl_water") and j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
+                    if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                        table.insert(rngpick, i)
+                    end
                 end
             end
             local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
             bonus_selection(blind, {blind_mult = 1.4, discards_mod = -1, hand_size = -1, tags = card.ability.reward.tags})
         elseif common == 'blind' then
-            local rngpick = {}
-            for i, j in pairs(G.P_BLINDS) do
-                if j.boss and not j.boss.showdown and not j.boss.bonus then
-                    table.insert(rngpick, i)
-                end
-            end
-            local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
-            bonus_selection(blind, {face_down = 0.5, tags = card.ability.reward.tags})
+            bonus_selection('bl_final_acorn', {face_down = 0.5, tags = card.ability.reward.tags})
         end
     end
 }
@@ -1122,7 +1146,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if (i ~= "bl_water") and (i ~= "bl_needle") and (i ~= "bl_cruel_tide") and (i ~= "bl_cruel_sword") and (i ~= "bl_cry_tax") and (not j.boss or not j.boss.showdown) and not (j.boss and j.boss.bonus) then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -1142,7 +1168,8 @@ SMODS.Bonus {
         name = "Magma Blind",
         text = {
             "Defeat {C:blue}#1#{} to",
-            "{C:attention}destroy{} cards {C:attention}held in hand{}"
+            "create {C:attention}#2#{} {C:dark_edition}Negative{}",
+            "{C:attention}#3#{}"
         }
     },
     atlas = "another",
@@ -1151,11 +1178,12 @@ SMODS.Bonus {
     cost = 5,
     set_ability = function(self, card, initial, delay_sprites)
         card.ability.the_blind = 'bl_hook'
-        card.ability.reward = {burn_hand = true}
+        card.ability.reward = {negative_cards = {key = 'c_hanged_man', amount = 3}}
     end,
     loc_vars = function(self, info_queue, card)
         info_queue[#info_queue+1] = {key = 'bl_snatch', set = 'Other'}
-        return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}}}
+        info_queue[#info_queue+1] = G.P_CENTERS['c_hanged_man']
+        return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}, card.ability.reward.negative_cards.amount, localize{type ='name_text', key = card.ability.reward.negative_cards.key, set = 'Tarot'}}}
     end,
     use2 = function(self, card, area, copier)
         bonus_selection(card.ability.the_blind, card.ability.reward)
@@ -1334,7 +1362,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and j.boss.showdown and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -1393,7 +1423,9 @@ SMODS.Bonus {
         local rngpick = {}
         for i, j in pairs(G.P_BLINDS) do
             if j.boss and j.boss.showdown and not j.boss.bonus then
-                table.insert(rngpick, i)
+                if not (j.in_pool) or not (type(j.in_pool == 'function')) or j.in_pool() then
+                    table.insert(rngpick, i)
+                end
             end
         end
         local blind = pseudorandom_element(rngpick, pseudoseed('bonus'))
@@ -1402,6 +1434,41 @@ SMODS.Bonus {
 }
 
 -----------------
+
+SMODS.Spectral {
+    key = 'loop',
+    loc_txt = {
+        name = "Loop",
+        text = {
+            "Create a non-{C:red}Common{}",
+            "{C:red}Bonus Blind{}"
+        }
+    },
+    atlas = "loops",
+    pos = {x = 0, y = 0},
+    use = function(self, card, area, copier)
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            local rarity = pseudorandom(pseudoseed('loop'))
+            if rarity <= 0.8 then
+                rarity = 2
+            elseif rarity <= 0.96 then
+                rarity = 3
+            else
+                rarity = 4
+            end
+            local card = SMODS.create_card {set = 'Bonus', rarity = rarity}
+            card:add_to_deck()
+            G.consumeables:emplace(card)
+            card:juice_up(0.3, 0.5)
+            return true
+        end}))
+        delay(0.6)
+    end,
+    can_use = function(self, card)
+        return (#G.consumeables.cards < G.consumeables.config.card_limit) or (card.area == G.consumeables)
+    end
+}
 
 SMODS.Tag {
     key = 'ironic',
@@ -1504,10 +1571,20 @@ SMODS.Tag {
     name = "Null Tag",
     pos = {x = 2, y = 0},
     apply = function(self, tag, context)
+        if context.type == 'immediate' then
+            local lock = tag.ID
+            G.CONTROLLER.locks[lock] = true
+            tag:yep('+', G.C.BLUE,function()
+                G.CONTROLLER.locks[lock] = nil
+                return true
+            end)
+            tag.triggered = true
+        end
     end,
     in_pool = function(self)
         return false
-    end
+    end,
+    config = {type = 'immediate'}
 }
 
 SMODS.Tag {
@@ -1775,7 +1852,8 @@ SMODS.Booster {
     ease_background_colour = function(self)
         ease_colour(G.C.DYN_UI.MAIN, mix_colours(G.C.RED, G.C.BLACK, 0.9))
         ease_background_colour{new_colour = G.C.FILTER, special_colour = G.C.BLACK, contrast = 2}
-    end,
+    end
+    
 }
 
 SMODS.Back {
@@ -2157,6 +2235,9 @@ function bonus_start_effect(bonusData)
     if bonusData.hand_mult then
         ease_hands_played(G.GAME.current_round.hands_left * (bonusData.hand_mult - 1))
     end
+    if bonusData.discard_mult then
+        ease_discard(G.GAME.current_round.discards_left * (bonusData.discard_mult - 1))
+    end
     if bonusData.hands_mod then
         if (G.GAME.current_round.hands_left + bonusData.hands_mod) > 0 then
             ease_hands_played(bonusData.hands_mod)
@@ -2286,6 +2367,9 @@ function bonus_start_effect(bonusData)
 end
 
 function bonus_reward(bonusData)
+    if G.GAME.bonus_saved then
+        return
+    end
     if bonusData.tags then
         for i, j in ipairs(bonusData.tags) do
             add_tag(Tag(j))
@@ -2419,8 +2503,22 @@ function bonus_end_of_round(bonusData)
         end}))
     end
     if bonusData.super_shop then
+        if G.GAME.bonus_saved then
+            return
+        end
         G.GAME.super_shop = true
         G.GAME.current_round.super_reroll_cost = 4
+    end
+    if bonusData.negative_cards then
+        if G.GAME.bonus_saved then
+            return
+        end
+        for i = 1, bonusData.negative_cards.amount do
+            local reward = SMODS.create_card {key = bonusData.negative_cards.key, no_edition = true}
+            reward:set_edition('e_negative')
+            reward:add_to_deck()
+            G.consumeables:emplace(reward)
+        end
     end
 end
 
@@ -2432,6 +2530,7 @@ function SMODS.current_mod.process_loc_text()
         }
     }
     G.localization.misc.dictionary["k_blind_pack"] = "Blind Pack"
+    G.localization.misc.dictionary["ph_bonus_pack"] = "Bonus Failed!"
     G.localization.descriptions.Other["bl_watch"] = {}
     G.localization.descriptions.Other["bl_watch"].text = { 'Must play 5 cards.', 'No repeat hand', 'types this round.' }
     G.localization.descriptions.Other["bl_watch"].name = "The Watch"
@@ -2842,13 +2941,20 @@ function handle_special_shop_card(nosave_shop, reroll)
             local cume, it, center = 0, 0, nil
             local megas = {}
             for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
-                if (v.config.choose == 2) and not G.GAME.banned_keys[v.key] then cume = cume + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1 ); table.insert(megas, v) end
+                if (v.config.choose == 2) and not G.GAME.banned_keys[v.key] then 
+                    if not (v.in_pool) or not (type(v.in_pool == 'function')) or v.in_pool() then
+                        local weight = v.get_weight and v:get_weight() or v.weight or 1
+                        cume = cume + weight
+                        table.insert(megas, v)
+                    end
+                end
             end
             local poll = pseudorandom(pseudoseed(('pack_special')..G.GAME.round_resets.ante))*cume
             for k, v in ipairs(megas) do
-                if not G.GAME.banned_keys[v.key] then 
-                    if not _type or _type == v.kind then it = it + ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) end
-                    if it >= poll and it - ((((G.GAME.selected_back.name == "Ante Deck") and (v.group_key == 'k_blind_pack') and (v.weight*5)) or v.weight) or 1) <= poll then center = v; break end
+                if not G.GAME.banned_keys[v.key] then
+                    local weight = v.get_weight and v:get_weight() or v.weight or 1
+                    if not _type or _type == v.kind then it = it + weight end
+                    if it >= poll and it - weight <= poll then center = v; break end
                 end
             end
             if center == nil then
@@ -2865,10 +2971,12 @@ function handle_special_shop_card(nosave_shop, reroll)
             card:start_materialize()
             G.special_card:emplace(card)
         else
-            local card = create_card('Spectral', G.special_card, nil, nil, nil, nil, 'c_soul', 'sho')
+            local card = create_card('Joker', G.special_card, true, nil, nil, nil, nil, 'sho')
             create_shop_card_ui(card, card.type, G.special_card)
             card:start_materialize()
             G.special_card:emplace(card)
+            card.ability.reduced_price = true
+            card:set_cost()
         end
     end
     return nosave_shop
