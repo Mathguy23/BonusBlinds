@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.6.1
+--- VERSION: 1.6.2
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -1183,6 +1183,7 @@ SMODS.Bonus {
     loc_vars = function(self, info_queue, card)
         info_queue[#info_queue+1] = {key = 'bl_snatch', set = 'Other'}
         info_queue[#info_queue+1] = G.P_CENTERS['c_hanged_man']
+        info_queue[#info_queue+1] = G.P_CENTERS['c_negative']
         return {vars = {localize{type ='name_text', key = card.ability.the_blind, set = 'Blind'}, card.ability.reward.negative_cards.amount, localize{type ='name_text', key = card.ability.reward.negative_cards.key, set = 'Tarot'}}}
     end,
     use2 = function(self, card, area, copier)
