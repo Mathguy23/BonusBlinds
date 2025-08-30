@@ -4,7 +4,7 @@
 --- PREFIX: bb
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Bonus Blinds
---- VERSION: 1.6.2
+--- VERSION: 1.6.3
 ----------------------------------------------
 ------------MOD CODE -------------------------
 

@@ -453,3 +453,21 @@ if G.GAME.bonus_saved then
     goto skip_cashing_out2
 end'''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''G.STATE = G.STATES.SHOP'''
+position = 'before'
+payload = '''if G.GAME.bonus_saved then
+    G.STATE = G.STATES.BLIND_SELECT
+else'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''G.STATE = G.STATES.SHOP'''
+position = 'after'
+payload = '''end'''
+match_indent = true
